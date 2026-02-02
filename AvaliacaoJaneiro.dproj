@@ -127,6 +127,7 @@
             <Form>frmConsultaPais</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="src\Service.Pais.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

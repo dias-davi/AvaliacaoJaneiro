@@ -2,7 +2,8 @@ program AvaliacaoJaneiro;
 
 uses
   Vcl.Forms,
-  Tela.Inicio in 'src\Tela.Inicio.pas' {frmConsultaPais};
+  Tela.Inicio in 'src\Tela.Inicio.pas' {frmConsultaPais},
+  Service.Pais in 'src\Service.Pais.pas';
 
 {$R *.res}
 

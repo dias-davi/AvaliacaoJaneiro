@@ -5,8 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  Vcl.StdCtrls, System.Net.HttpClient, System.Net.HttpClientComponent,
-  System.JSON, System.Generics.Collections;
+  Vcl.StdCtrls, Service.Pais, Vcl.ExtCtrls;
 
 type
   TfrmConsultaPais = class(TForm)
@@ -27,7 +26,7 @@ type
     procedure edtNomePaisChange(Sender: TObject);
     procedure edtNomePaisKeyPress(Sender: TObject; var Key: Char);
   private
-    procedure LimparCampos;
+    procedure LimparCampos();
   public
   end;
 
@@ -66,67 +65,22 @@ end;
 
 procedure TfrmConsultaPais.btnConsultarClick(Sender: TObject);
 var
-  lClient : TNetHTTPClient;
-  lResponse : string;
-  lJsonArray : TJSONArray;
-  lJsonObj : TJSONObject;
-  lJsonCurrencies : TJSONObject;
-  lPair : TJSONPair;
-  lUrl : string;
-  lPais : string;
-
+  Pais: TPaisDTO;
 begin
-  LimparCampos();
-
-  lPais := Trim(edtNomePais.Text);
-
-  if lPais = '' then
-  begin
-    ShowMessage('Informe o nome do país.');
-    Exit;
-  end;
-
-  lUrl := 'https://restcountries.com/v3.1/name/' + lPais;
-
-  lClient := TNetHTTPClient.Create(nil);
   try
-    try
-      lResponse := lClient.Get(lUrl).ContentAsString;
+    LimparCampos();
 
-      lJsonArray := TJSONObject.ParseJSONValue(lResponse) as TJSONArray;
+    Pais := TPaisService.ConsultarPais(edtNomePais.Text);
 
-      if (lJsonArray = nil) or (lJsonArray.Count = 0) then
-      begin
-        ShowMessage('País não encontrado.');
-        Exit;
-      end;
+    edtNomeOficial.Text := Pais.NomeOficial;
+    edtCapital.Text     := Pais.Capital;
+    edtRegiao.Text      := Pais.Regiao;
+    edtPopulacao.Text  := Pais.Populacao.ToString;
+    edtMoeda.Text      := Pais.Moeda;
 
-
-
-      lJsonObj := lJsonArray.Items[0] as TJSONObject;
-      edtNomeOficial.Text :=
-        lJsonObj.GetValue('name').GetValue<string>('official');
-
-      edtCapital.Text :=
-        (lJsonObj.GetValue('capital') as TJSONArray).Items[0].Value;
-
-      edtRegiao.Text :=
-        lJsonObj.GetValue<string>('region');
-
-      edtPopulacao.Text :=
-        lJsonObj.GetValue<Int64>('population').ToString;
-
-      lJsonCurrencies := lJsonObj.GetValue('currencies') as TJSONObject;
-      lPair := lJsonCurrencies.Pairs[0];
-      edtMoeda.Text :=
-        lPair.JsonValue.GetValue<string>('name');
-
-    except
-      on E: Exception do
-        ShowMessage('Erro ao consultar API: ' + E.Message);
-    end;
-  finally
-    lClient.Free;
+  except
+    on E: Exception do
+      ShowMessage(E.Message);
   end;
 end;
 
