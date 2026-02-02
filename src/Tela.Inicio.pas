@@ -65,7 +65,7 @@ end;
 
 procedure TfrmConsultaPais.btnConsultarClick(Sender: TObject);
 var
-  Pais: TPaisDTO;
+  Pais: TPaisInfo;
 begin
   try
     LimparCampos();

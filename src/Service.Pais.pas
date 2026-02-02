@@ -12,11 +12,11 @@ uses
 
 type
   TPaisInfo = record
-    FNomeOficial: string;
-    FCapital: string;
-    FRegiao: string;
-    FPopulacao: Int64;
-    FMoeda: string;
+    NomeOficial: string;
+    Capital: string;
+    Regiao: string;
+    Populacao: Int64;
+    Moeda: string;
   end;
 
   TPaisService = class
@@ -62,14 +62,14 @@ begin
       raise Exception.Create('País não encontrado.');
 
     JsonObj := JsonArray.Items[0] as TJSONObject;
-    Result.FNomeOficial := JsonObj.GetValue('name').GetValue<string>('official');
-    Result.FCapital := (JsonObj.GetValue('capital') as TJSONArray).Items[0].Value;
-    Result.FRegiao := JsonObj.GetValue<string>('region');
-    Result.FPopulacao := JsonObj.GetValue<Int64>('population');
+    Result.NomeOficial := JsonObj.GetValue('name').GetValue<string>('official');
+    Result.Capital := (JsonObj.GetValue('capital') as TJSONArray).Items[0].Value;
+    Result.Regiao := JsonObj.GetValue<string>('region');
+    Result.Populacao := JsonObj.GetValue<Int64>('population');
 
     JsonCurrencies := JsonObj.GetValue('currencies') as TJSONObject;
     Pair := JsonCurrencies.Pairs[0];
-    Result.FMoeda := Pair.JsonValue.GetValue<string>('name');
+    Result.Moeda := Pair.JsonValue.GetValue<string>('name');
 
   finally
     Client.Free;
